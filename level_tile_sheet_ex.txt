@@ -1,0 +1,4 @@
+(level hight in # of tiles)
+(level length in # of tiles)
+(number of pixels in a tile)
+(tile location number) (tile type number) (check collitions)(offset H)(offset V)
