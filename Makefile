@@ -1,11 +1,11 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = .\src\main.cpp .\src\GameEngine.cpp
+OBJS = .\src\main.cpp .\src\Game_Engine.cpp .\src\Image_Handler.cpp
 
 #CC specifies which compiler we're using
 CC = g++
 
 #INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = -IC:\SDL2\include
+INCLUDE_PATHS = -IC:\SDL2\include\SDL2\
 
 #LIBRARY_PATHS specifies the additional library paths we'll need
 LIBRARY_PATHS = -LC:\SDL2\lib

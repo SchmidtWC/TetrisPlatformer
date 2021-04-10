@@ -1,18 +1,12 @@
 // CS 4160 - starter code written by Victor Zordan
 
-#include "../include/GameEngine.h"
+#include "../include/Game_Engine.h"
 
 int main(int argv, char** args) 
 {
-  const int SCREEN_WIDTH = 736;
-  const int SCREEN_HEIGHT = 480;
-  GameEngine engine(SCREEN_WIDTH, SCREEN_HEIGHT);
+  Game_Engine engine = Game_Engine();
 
-  engine.my_SDL_init();
-  engine.gameLoop();
-  
+  engine.Game_loop();
 
-  IMG_Quit();
-  SDL_Quit();
   return 0; 
 }

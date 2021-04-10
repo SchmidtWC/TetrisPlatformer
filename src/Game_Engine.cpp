@@ -1,4 +1,4 @@
-#include "Game_Engine.h"
+#include "../include/Game_Engine.h"
 
 /*Constructs the Game Engine*/
 Game_Engine::Game_Engine() {
@@ -9,21 +9,20 @@ Game_Engine::Game_Engine() {
 
 	IMG_Init(IMG_INIT_PNG);
 
-	game_window = SDL_CreateWindow("Forest Bear", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-	game_renderer = SDL_CreateRenderer(game_window, -1, 0);
+	game_window = std::unique_ptr<SDL_Window, std::function<void(SDL_Window *)>> (SDL_CreateWindow("Tetris Platformer", 
+				SDL_WINDOWPOS_CENTERED, 
+				SDL_WINDOWPOS_CENTERED, 
+				SCREEN_WIDTH,
+				SCREEN_HEIGHT, 0), 
+				SDL_DestroyWindow);
 
-	Window_Rect.x = 0;
-	Window_Rect.y = 0;
-	Window_Rect.w = 640;
-	Window_Rect.h = 480;
+    game_renderer = std::unique_ptr<SDL_Renderer, std::function<void(SDL_Renderer *)>> 
+        (SDL_CreateRenderer(game_window.get(), -1, SDL_RENDERER_PRESENTVSYNC), SDL_DestroyRenderer);
 
 	//Init Image Handler
-	std::vector <std::string> Image_names = { 
-		"Layer2.png", "Layer3.png", "Layer4.png", "Layer5.png", "Layer6.png", 
-		"Layer7.png", "Layer8.png", "Layer9.png", "Level_tile_sheet.png", 
-		"Idle.png", "run.png", "jump.png" };
+	std::vector <std::string> Image_names = {};
 
-	Images = Image_Handler(Image_names, game_renderer);
+	Images = Image_Handler(Image_names, game_renderer.get());
 }
 
 
@@ -31,22 +30,23 @@ Game_Engine::Game_Engine() {
    Then loops through the Game Engine Functions while Run_game = ture
  */
 int Game_Engine::Game_loop() {
-	int hold_duration, LST; // LST = Loop Start time
+	//int hold_duration, LST; // LST = Loop Start time
 
-	Level_init();
+	//Level_init();
 	Run_game = true;
 	while (Run_game) {
-		LST = SDL_GetTicks();
+		//LST = SDL_GetTicks();
 		Handle_Events();
 		Update_Mechanics();
 		Render();
 
-		//Hold until current frame finishes
+		/*/Hold until current frame finishes
 		hold_duration = SDL_GetTicks() - LST;
 		if (hold_duration < frame_duration) {
 			SDL_Delay(frame_duration - hold_duration);
-		}
+		}*/
 	}
+	Quit();
 	return 0;
 }
 
@@ -122,26 +122,12 @@ int Game_Engine::Level_init() {
 	Player = Player_obj(DestRect, &Images,
 						frame_count, duration, names);
 
-	/*DestRect.x = 71;
-	DestRect.y = 500;
-	DestRect.h = 71;
-	DestRect.w = 71;
-	src_rect.h = 0;
-	src_rect.w = 0;
-	std::string emitter = " dd";
-	std::string particle = " pd";
-	//Particle_Emitter(DestRect, &Images, src_rect, emitter, particle);
-	Hive = Particle_Emitter(DestRect, &Images, src_rect, emitter, particle);*/
-
 	return 0;
 }
 
 
 /* Closes the Game Down*/
 int Game_Engine::Quit() {
-	SDL_DestroyRenderer(game_renderer);
-	SDL_DestroyWindow(game_window);
-
 	IMG_Quit();
 	SDL_Quit();
 	return 0;
@@ -159,18 +145,18 @@ int Game_Engine::Quit() {
 int Game_Engine::Render() {
 
 	//clear last Render
-	SDL_SetRenderDrawColor(game_renderer, 118, 147, 179, 255);
-	SDL_RenderClear(game_renderer);
+	SDL_SetRenderDrawColor(game_renderer.get(), 118, 147, 179, 255);
+	SDL_RenderClear(game_renderer.get());
 
 	//Render background and player
-	background.Draw(game_renderer, Camera_move);
+	background.Draw(game_renderer.get(), Camera_move);
 	Camera_move = 0;
-	Player.Draw(game_renderer);
+	Player.Draw(game_renderer.get());
 
 	//Loop Through Objects to Render
 	for (int i = 0; i < Objects.size(); i++) {
 		if (Objects[i].get_is_Rendered()) {
-			Objects[i].Draw(game_renderer);
+			Objects[i].Draw(game_renderer.get());
 		}
 	}	
 
@@ -179,7 +165,7 @@ int Game_Engine::Render() {
 	}*/
 
 	// Put the Image from the game_renderer to the screen
-	SDL_RenderPresent(game_renderer);
+	SDL_RenderPresent(game_renderer.get());
 	return 0;
 }
 
@@ -241,169 +227,17 @@ int Game_Engine::Update_Mechanics() {
 
 	// Get Player State and call the coresponding Player Position update function
 	switch (Player.get_State()) {
-	case Jump:
-		Player.jump();
-		break;
+		case Jump:
+			Player.jump();
+			break;
 
-	case Run:
-		Player.run();
-		break;
+		case Run:
+			Player.run();
+			break;
 
-	case Idle:
-		Player.idle();
-		break;
+		case Idle:
+			Player.idle();
+			break;
 	}
-
-	//move camera based on Player collitions with Camera Bounds
-	Camera_move_dist = 0;
-
-	// Check for collitions with Left Camera Bound
-	if (Player.get_edge_L() < LEFT_CAM_BOUND && Level->get_edge_L() != Window_Rect.x) {
-		if (Player.get_Vel_x() <= Level->get_edge_L()) {
-			Camera_move_dist = Window_Rect.x - Level->get_edge_L();
-			if (Level->get_edge_L() == -8) {
-				Camera_move_dist = -8;
-			}
-			Level->Move_side(Camera_move_dist);
-			Player.cam_col_left(LEFT_CAM_BOUND);
-		}
-		else {
-			Camera_move_dist = Player.get_edge_L() - LEFT_CAM_BOUND;
-			if (Level->get_edge_L() == -8) {
-				Camera_move_dist = -8;
-			}
-			Level->Move_side(Camera_move_dist);
-			Player.cam_col_left(LEFT_CAM_BOUND);
-		}
-		for (int i = 0; i < Objects.size(); i++) {
-			Objects[i].Move_side(Camera_move_dist);
-		}
-		Camera_move = Camera_move_dist;
-		Camera_move_dist = 0;
-	}
-
-	// Check for collition with Right Camera Bound
-	if (Player.get_edge_R() > RIGHT_CAM_BOUND && Level->get_edge_R() != Window_Rect.w) {
-		if (Player.get_Vel_x() > Level->get_edge_R() - Window_Rect.w) {
-			Camera_move_dist = Level->get_edge_R() - Window_Rect.w;
-				Level->Move_side(Camera_move_dist);
-				Player.cam_col_right(RIGHT_CAM_BOUND);
-		}
-		else {
-			Camera_move_dist = Player.get_edge_R() - RIGHT_CAM_BOUND;
-				Level->Move_side(Camera_move_dist);
-				Player.cam_col_right(RIGHT_CAM_BOUND);
-		}
-		for (int i = 0; i < Objects.size(); i++) {
-			Objects[i].Move_side(Camera_move_dist);
-		}
-		Camera_move = Camera_move_dist;
-		Camera_move_dist = 0;
-	}
-
-	//checks if an object is within the window
-	bool render = true;
-	for (int i = 0; i < Objects.size(); i++) {
-		if (Objects[i].get_edge_R() < Window_Rect.x && 
-			Objects[i].get_edge_L() > (Window_Rect.x + Window_Rect.w)) {
-			bool render = false;
-		}
-		else if (Objects[i].get_edge_T() > (Window_Rect.y + Window_Rect.h) &&
-				 Objects[i].get_edge_B() < Window_Rect.y) {
-			bool render = false;
-		}
-
-		Objects[i].set_is_Rendered(render);
-		render = true;
-	}
-
-	/*if (!Hive.get_is_rendered() && !Hive.get_Done()) {
-		Hive.Pe_update();
-	}
-
-	if (Collision_check(Player.get_Hitbox(), Hive.get_HitBox())) {
-		Hive.Pe_update();
-	}*/
-	
-	int temp_B, temp_S;
-	char col_type = ' ';
-	const char col_T = 'T';
-	const char col_B = 'B';
-	const char col_L = 'L';
-	const char col_R = 'R';
-	const char col_N = ' ';
-
-	/*Collitions*/
-	for (int i = 0; i < Objects.size(); i++) {
-		if (Objects[i].get_check_col()) {
-			temp_B = Player.get_edge_B() - Objects[i].get_edge_T();
-			temp_S = Player.get_edge_R() - Objects[i].get_edge_L();
-			if (Collision_check(Player.get_Hitbox(), Objects[i].get_Hitbox())) {
-				temp_B = Player.get_edge_B() - Objects[i].get_edge_T();
-				temp_S = Player.get_edge_R() - Objects[i].get_edge_L();
-				if (Player.get_edge_B() - Objects[i].get_edge_T() <= 6) {
-					/*if (!(Player.get_edge_R() - Objects[i].get_edge_L() <= 4)) {
-						col_type = col_B;
-					}
-					else if (!(Objects[i].get_edge_R() - Player.get_edge_L() <= 4)) {
-						col_type = col_B;
-					}*/
-					col_type = col_B;
-					/*Player.col_bot(Objects[i].get_edge_T() - 2);
-					Player.stop_jump();*/
-				}
-				else if (Player.get_edge_R() - Objects[i].get_edge_L() <= 4) {
-					col_type = col_L;
-					//Player.col_left(Objects[i].get_edge_L());
-				}
-				else if (Objects[i].get_edge_R() - Player.get_edge_L() <= 4) {
-					col_type = col_R;
-					//Player.col_right(Objects[i].get_edge_R());
-				}
-				else if (Objects[i].get_edge_B() - Player.get_edge_T() <= 6) {
-					/*if (!(Player.get_edge_R() - Objects[i].get_edge_L() <= 4)) {
-						col_type = col_T;
-					}
-					else if (!(Objects[i].get_edge_R() - Player.get_edge_L() <= 4)) {
-						col_type = col_T;
-					}*/
-					col_type = col_T;
-					//Player.col_top(Objects[i].get_edge_B());
-				}
-				else {
-					col_type = col_N;
-					/*if (Player.get_edge_B() != Objects[i].get_edge_T()) {
-						Player.set_State(Jump);
-					}*/
-				}
-			}
-
-			switch (col_type) {
-			case col_B:
-				Player.col_bot(Objects[i].get_edge_T());
-				Player.stop_jump();
-				break;
-			case col_L:
-				Player.col_left(Objects[i].get_edge_L()-1);
-				break;
-			case col_R:
-				Player.col_right(Objects[i].get_edge_R()+1);
-				break;
-			case col_T:
-				Player.col_top(Objects[i].get_edge_B());
-				break;
-			default:
-				if (Player.get_edge_B() != Objects[i].get_edge_T()) {
-					Player.set_State(Jump);
-					break;
-				}
-			}
-			//std::cout << col_type << std::endl;
-			col_type = col_N;
-		}
-	}
-
-
-	
 	return 0;
 }

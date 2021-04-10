@@ -4,10 +4,12 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <functional>
+#include <memory>
 
 class Image_Handler {
 private:
-	std::map <std::string, SDL_Texture*> Textures;
+	std::map <std::string, std::unique_ptr<SDL_Texture, std::function<void(SDL_Texture *)>>> Textures;
 
 public:
 	Image_Handler();
