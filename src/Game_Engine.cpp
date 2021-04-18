@@ -20,7 +20,7 @@ Game_Engine::Game_Engine() {
         (SDL_CreateRenderer(game_window.get(), -1, SDL_RENDERER_PRESENTVSYNC), SDL_DestroyRenderer);
 
 	//Init Image Handler
-	std::vector <std::string> Image_names = {};
+	std::vector <std::string> Image_names = {"./asset/player.png", "./asset/tiles.png"};
 
 	Images = Image_Handler(Image_names, game_renderer.get());
 }
@@ -30,9 +30,11 @@ Game_Engine::Game_Engine() {
    Then loops through the Game Engine Functions while Run_game = ture
  */
 int Game_Engine::Game_loop() {
-	//int hold_duration, LST; // LST = Loop Start time
 
-	//Level_init();
+	// Init Game entities
+	player = new Player(100, 255, 64, 64, &Images);
+
+	Level_init();
 	Run_game = true;
 	while (Run_game) {
 		//LST = SDL_GetTicks();
@@ -59,43 +61,45 @@ int Game_Engine::Game_loop() {
 		- Player
 */
 int Game_Engine::Level_init() {
-	SDL_Rect DestRect, src_rect;
+	
+	int temp, ncols = 8;
 
 	//Read tile and level dementions
-	Level_file.open("tile_Sheet.txt");
+	Level_file.open("./asset/tile_Sheet.txt");
 	if (Level_file.is_open()){
-		Level_file >> level_hight;
-		Level_file >> level_length;
+		Level_file >> level_height;
+		Level_file >> level_width;
 		Level_file >> tile_size;
 	}
 
 	//Level bound
+	/*
 	DestRect.x = 0;
 	DestRect.y = 0;
 	DestRect.h = 0;
 	DestRect.w = tile_size * level_length;
 	Level = new Game_obj(DestRect, &Images, 0, true, "");
+	*/
 
 	//Read level tile sheet layout
 	if (Level_file.is_open()) {
 		while (!Level_file.eof()) {
-			Level_file >> tile_loc;
-			Level_file >> tile_num;
-			Level_file >> col_check;
-			Level_file >> Hoffset;
-			Level_file >> Voffset;
+			Level_file >> tile_x;
+			Level_file >> tile_y;
+			Level_file >> tile_type;
+			Level_file >> temp;
 
-			DestRect.x = (tile_loc % level_length) * tile_size + Hoffset;
-			DestRect.y = tile_loc/level_length * tile_size + Voffset;
-			DestRect.w = tile_size;
-			DestRect.h = tile_size;
-
+			col_check = !!temp;
+			tile_x *= tile_size;
+			tile_y *= tile_size;
+ 
 			//create objects at the specified locations
-			Objects.push_back(Game_obj(DestRect, &Images, tile_num, col_check, "Level_tile_sheet.png"));
+			Objects.push_back(Tile(tile_type, tile_x, tile_y, tile_size, ncols, col_check, &Images));
 		}
 	}
 
 	//Background
+	/*
 	src_rect.x = 0;
 	src_rect.y = 0;
 	src_rect.h = SCREEN_HEIGHT;
@@ -109,20 +113,13 @@ int Game_Engine::Level_init() {
 	std::vector <SDL_Rect> Src_rect = { src_rect, DestRect };
 	std::vector <std::string> TRX_names = { "Layer2.png", "Layer3.png", "Layer4.png", "Layer5.png", "Layer6.png", "Layer7.png", "Layer8.png", "Layer9.png" };
 	background = Background(Src_rect, TRX_names, &Images);
-
+	*/
 
 	//Player Character
-	DestRect.x = 170;
-	DestRect.y = 366;
-	DestRect.h = 60;
-	DestRect.w = 40;
-	std::vector <int> frame_count = {1, 6, 3};
-	std::vector <int> duration = {1, 110, 100};
-	std::vector <std::string> names = {"Idle.png", "run.png", "jump.png"};
-	Player = Player_obj(DestRect, &Images,
-						frame_count, duration, names);
+	player = new Player(100, 255, 32, 32, &Images);
 
 	return 0;
+
 }
 
 
@@ -149,15 +146,12 @@ int Game_Engine::Render() {
 	SDL_RenderClear(game_renderer.get());
 
 	//Render background and player
-	background.Draw(game_renderer.get(), Camera_move);
-	Camera_move = 0;
-	Player.Draw(game_renderer.get());
+	//background.Draw(game_renderer.get(), Camera_move);
+	player->render(game_renderer.get());
 
 	//Loop Through Objects to Render
 	for (int i = 0; i < Objects.size(); i++) {
-		if (Objects[i].get_is_Rendered()) {
-			Objects[i].Draw(game_renderer.get());
-		}
+		Objects[i].render(game_renderer.get());
 	}	
 
 	/*if (Hive.get_is_rendered() || !Hive.get_Done()) {
@@ -183,37 +177,8 @@ int Game_Engine::Handle_Events() {
 		
 		Calls Player Functions to end end actions when there repective Key is relesed
 	*/
+	player->controller(input);
 
-	if (input.type == SDL_KEYDOWN) {
-		switch (input.key.keysym.sym) {
-		case SDLK_a:
-			Player.Run_L();
-			break;
-
-		case SDLK_d:
-			Player.Run_R();
-			break;
-
-		case SDLK_SPACE:
-			Player.jump();
-			break;
-		}
-	}
-	if (input.type == SDL_KEYUP) {
-		switch (input.key.keysym.sym) {
-		case SDLK_a:
-			if (Player.get_Vel_x() < 0){
-				Player.stop_run();
-			}
-			break;
-
-		case SDLK_d:
-			if (Player.get_Vel_x() > 0) {
-				Player.stop_run();
-			}
-			break;
-		}
-	}
 	return 0;
 }
 
@@ -226,18 +191,7 @@ int Game_Engine::Handle_Events() {
 int Game_Engine::Update_Mechanics() {
 
 	// Get Player State and call the coresponding Player Position update function
-	switch (Player.get_State()) {
-		case Jump:
-			Player.jump();
-			break;
-
-		case Run:
-			Player.run();
-			break;
-
-		case Idle:
-			Player.idle();
-			break;
-	}
+	player->updatePos();
+	
 	return 0;
 }

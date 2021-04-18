@@ -7,23 +7,16 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_timer.h>
-#include "Image_Handler.h"
 #include <functional>
 #include <memory>
 
+#include "Game_Entity.h"
+#include "Player.h"
+#include "Tile.h"
+
 //Window Size in Pixels
 static const int SCREEN_WIDTH = 640;
-static const int SCREEN_HEIGHT = 480;
-
-/*Camera movement Boundaries
-static const int RIGHT_CAM_BOUND = 480;
-static const int LEFT_CAM_BOUND = 160;
-
-static const int fps = 60;
-static const int frame_duration = 1000 / fps;
-static const int event_duration = 1000 / fps;
-static const int update_duration = 1000 / fps;
-*/
+static const int SCREEN_HEIGHT = 704;
 
 /*Collition types
 static const char col_left = 'L';
@@ -42,7 +35,8 @@ private:
 	std::fstream Level_file;
 
 	//Game Objects
-	//std::vector <Game_obj> Objects;
+	Player* player;
+	std::vector<Game_Entity> Objects;
 
 	//Particle_Emitter Hive;
 
@@ -50,8 +44,7 @@ private:
 	bool Run_game = true;
 	int Camera_move = 0;
 	int Camera_move_dist = 0;
-	int level_hight = 0, level_length, tile_size, tile_loc, tile_num;
-	int Hoffset, Voffset;
+	int level_height = 0, level_width, tile_size, tile_x, tile_y, tile_type;
 	bool col_check;
 
 	//Game Engin Functions
