@@ -15,6 +15,8 @@ void Player::controller(SDL_Event& input){
 		case SDLK_SPACE:
 			jump();
 			break;
+		case SDLK_LSHIFT:
+			Magic = true;
 		}
 	}
 	if (input.type == SDL_KEYUP) {
@@ -30,6 +32,8 @@ void Player::controller(SDL_Event& input){
 				stop_run();
 			}
 			break;
+		case SDLK_LSHIFT:
+			Magic = false;
 		}
 	}
 }
@@ -137,8 +141,17 @@ void Player::stop_run() {
 	state = IDLE;
 }
 
+Hit_Box Player::get_Hitbox() {
+	return Hit_Boxes[0];
+}
+
 Hit_Box Player::Kick(){
 	return Hit_Boxes[left + 1];
+}
+
+void Player::collision_response(int x, int y) {
+	destRect.x += x;
+	destRect.y += y;
 }
 
 void Player::render(SDL_Renderer* renderer) {

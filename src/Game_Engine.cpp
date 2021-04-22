@@ -62,13 +62,12 @@ int Game_Engine::Game_loop() {
 */
 int Game_Engine::Level_init() {
 	
-	int temp, ncols = 8;
+	char symbol;
+	int x=0, y=0, ncols=8;
 
 	//Read tile and level dementions
-	Level_file.open("./asset/tile_Sheet.txt");
+	Level_file.open("./asset/level_0.txt");
 	if (Level_file.is_open()){
-		Level_file >> level_height;
-		Level_file >> level_width;
 		Level_file >> tile_size;
 	}
 
@@ -81,22 +80,32 @@ int Game_Engine::Level_init() {
 	Level = new Game_obj(DestRect, &Images, 0, true, "");
 	*/
 
-	//Read level tile sheet layout
+	//Read level editor sheet layout
 	if (Level_file.is_open()) {
 		while (!Level_file.eof()) {
-			Level_file >> tile_x;
-			Level_file >> tile_y;
-			Level_file >> tile_type;
-			Level_file >> temp;
-
-			col_check = !!temp;
-			tile_x *= tile_size;
-			tile_y *= tile_size;
- 
-			//create objects at the specified locations
-			Objects.push_back(Tile(tile_type, tile_x, tile_y, tile_size, ncols, col_check, &Images));
+			Level_file >> symbol;
+			switch (symbol) {
+				case '0':
+					Objects.push_back(Tile(0, x, y, tile_size, ncols, true, &Images));
+					break;
+				case '1':
+					Objects.push_back(Tile(1, x, y, tile_size, ncols, false, &Images));
+					break;
+				case '2':
+					Objects.push_back(Tile(2, x, y, tile_size, ncols, false, &Images));
+					break;
+				default:
+					break;
+			}
+			
+			x += tile_size;
+			if(x >= SCREEN_WIDTH) {
+				x = 0;
+				y += tile_size;
+			}
 		}
 	}
+	Level_file.close();
 
 	//Background
 	/*
@@ -116,7 +125,7 @@ int Game_Engine::Level_init() {
 	*/
 
 	//Player Character
-	player = new Player(100, 255, 32, 32, &Images);
+	player = new Player(400, 300, 32, 32, &Images);
 
 	return 0;
 
@@ -147,13 +156,13 @@ int Game_Engine::Render() {
 
 	//Render background and player
 	//background.Draw(game_renderer.get(), Camera_move);
-	player->render(game_renderer.get());
 
 	//Loop Through Objects to Render
 	for (int i = 0; i < Objects.size(); i++) {
 		Objects[i].render(game_renderer.get());
 	}	
 
+	player->render(game_renderer.get());
 	/*if (Hive.get_is_rendered() || !Hive.get_Done()) {
 		Hive.Pe_render(game_renderer);
 	}*/
@@ -191,7 +200,29 @@ int Game_Engine::Handle_Events() {
 int Game_Engine::Update_Mechanics() {
 
 	// Get Player State and call the coresponding Player Position update function
+	Hit_Box playerHitbox;
+	Hit_Box objectHitbox;
+	std::vector<Hit_Box> playerHitboxes;
 	player->updatePos();
+	switch (player->state)
+	{
+		case player->KICK:
+			playerHitboxes = player->get_Hit_Boxs();
+			break;
+		default:
+			playerHitbox = player->get_Hitbox();
+			break;
+	}
+	for (int i = 0; i < Objects.size(); i++) {
+		if (Objects[i].get_check_col()) {
+			objectHitbox = Objects[i].get_Hit_Boxs()[0];
+			if (playerHitbox.LE - objectHitbox.RE < 0) {
+				std::cout << -1 * (playerHitbox.LE - objectHitbox.RE) << std::endl;
+				//player->collision_response(-1 * (playerHitbox.LE - objectHitbox.RE), 0);
+			}
+		}
+	}
 	
 	return 0;
 }
+

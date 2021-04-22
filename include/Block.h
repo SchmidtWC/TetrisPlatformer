@@ -1,6 +1,6 @@
 #pragma once
-#include <SDL.h>
-#include "Collision.h"
+//#include <SDL.h>
+//#include "Collision.h"
 
 class Block {
 private:
@@ -14,9 +14,10 @@ private:
 	Hit_Box Box;
 
 public:
+	Hit_Box Box;
 	Block(int Px, int Py, int w, int h, int Tile_Size, int state, int offset): Px(Px), Py(Py), w(w), h(h), State(state), offset(offset){
-		dest_rect.w = Tile_Size;
-		dest_rect.h = Tile_Size;
+		dest_rect.w = w;
+		dest_rect.h = h;
 
 		if (state == 0) {
 			Box.left_edge = Px - offset;
@@ -53,5 +54,6 @@ public:
 	}
 
 	void rotate(bool direct);
-	void render(SDL_Renderer* renderer);
+	void move(int x, int y);
+	void render(SDL_Renderer* gameRenderer);
 };

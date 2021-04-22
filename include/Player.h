@@ -26,6 +26,7 @@ class Player: public Game_Entity {
         int Jump_Frame = 0;
         int Jump_Start = 0; 
         int Jump_FR = 150;
+		bool Magic = false;
 
 		Player(int x, int y, int w, int h, Image_Handler* image):
             Game_Entity(x, y, w, h) {
@@ -62,6 +63,7 @@ class Player: public Game_Entity {
 		Hit_Box get_Hitbox();
 		Hit_Box Kick();
 		void controller(SDL_Event& event);
+        void collision_response(int x, int y);
         void updatePos();
         void render(SDL_Renderer* renderer);
 

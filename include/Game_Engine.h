@@ -15,8 +15,8 @@
 #include "Tile.h"
 
 //Window Size in Pixels
-static const int SCREEN_WIDTH = 640;
-static const int SCREEN_HEIGHT = 704;
+static const int SCREEN_WIDTH = 960;
+static const int SCREEN_HEIGHT = 768;
 
 /*Collition types
 static const char col_left = 'L';
