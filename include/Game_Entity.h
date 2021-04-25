@@ -8,8 +8,7 @@
 #include <string>
 
 #include "Sprite.h"
-
-struct Hit_Box {int LE, RE, TE, BE;};
+#include "Collision.h"
 
 class Game_Entity {
     

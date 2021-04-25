@@ -1,5 +1,5 @@
 #pragma once
 
-struct Hit_Box {int left_edge, right_edge, top_edge, bottom_edge;};
+struct Hit_Box {int LE, RE, TE, BE;};
 
 bool Collision_check(Hit_Box A, Hit_Box B);

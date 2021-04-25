@@ -94,6 +94,11 @@ int Game_Engine::Level_init() {
 				case '2':
 					Objects.push_back(Tile(2, x, y, tile_size, ncols, false, &Images));
 					break;
+				case 'P':
+					player = new Player(x, y, tile_size, tile_size, &Images);
+					// Objects.insert(Objects.begin(), Player(x, y, tile_size, tile_size, &Images));
+					break;
+
 				default:
 					break;
 			}
@@ -108,6 +113,7 @@ int Game_Engine::Level_init() {
 	Level_file.close();
 
 	//Background
+
 	/*
 	src_rect.x = 0;
 	src_rect.y = 0;
@@ -125,7 +131,7 @@ int Game_Engine::Level_init() {
 	*/
 
 	//Player Character
-	player = new Player(400, 300, 32, 32, &Images);
+
 
 	return 0;
 
@@ -204,7 +210,7 @@ int Game_Engine::Update_Mechanics() {
 	Hit_Box objectHitbox;
 	std::vector<Hit_Box> playerHitboxes;
 	player->updatePos();
-	switch (player->state)
+	switch (player->getState())
 	{
 		case player->KICK:
 			playerHitboxes = player->get_Hit_Boxs();
@@ -213,12 +219,32 @@ int Game_Engine::Update_Mechanics() {
 			playerHitbox = player->get_Hitbox();
 			break;
 	}
+	int edge = 0;
+	char type = 'N';
 	for (int i = 0; i < Objects.size(); i++) {
 		if (Objects[i].get_check_col()) {
 			objectHitbox = Objects[i].get_Hit_Boxs()[0];
-			if (playerHitbox.LE - objectHitbox.RE < 0) {
-				std::cout << -1 * (playerHitbox.LE - objectHitbox.RE) << std::endl;
-				//player->collision_response(-1 * (playerHitbox.LE - objectHitbox.RE), 0);
+			if (Collision_check(playerHitbox, objectHitbox)) {
+					//std::cout << objectHitbox.TE << std::endl;
+					if (playerHitbox.BE - objectHitbox.TE <= 6) {
+						edge = objectHitbox.TE;
+						type = 'B';
+						player->collision_response('B', objectHitbox.TE, i);
+					}
+					else if (playerHitbox.RE - objectHitbox.LE <= 4) {
+						std::cout << "R" << std::endl;
+						player->collision_response('R', objectHitbox.LE, i);
+					}
+					else if (objectHitbox.RE - playerHitbox.LE >= 4) {
+						std::cout << "L" << std::endl;
+						player->collision_response('L', objectHitbox.RE, i);
+					}
+					else if (objectHitbox.BE - playerHitbox.TE <= 6) {
+						player->collision_response('T', objectHitbox.BE, i);
+					}
+					else {
+						player->collision_response('N', 0, i );
+					}
 			}
 		}
 	}

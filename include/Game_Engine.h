@@ -13,6 +13,7 @@
 #include "Game_Entity.h"
 #include "Player.h"
 #include "Tile.h"
+#include "Collision.h"
 
 //Window Size in Pixels
 static const int SCREEN_WIDTH = 960;

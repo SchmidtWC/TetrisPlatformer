@@ -48,16 +48,13 @@ void Player::updatePos() {
 			run();
             sprite->nextFrame();
 			break;
-
-		case IDLE:
-			//idle();
-			break;
 	}
 }
 
 void Player::jump() {
 	// Sets Vertical velocity, and Player state to Jump
 	if (Jump_Frame == 0 && state != JUMP) {
+		std::cout << "j" << std::endl;
 		Jump_Start = SDL_GetTicks()/ Jump_FR;
 		velY = -5;
 		state = JUMP;
@@ -110,35 +107,45 @@ void Player::stop_jump() {
 
 /*set Player State = Run, and Player X velocity = 4*/
 void Player::Run_R() {
-	state = RUN;
+	if (state != JUMP)
+		state = RUN;
 	velX = 4;
-    left = 0;
+	left = 0;
+
 }
 
 
 /*set Player State = Run, and Player X velocity = -4*/
 void Player::Run_L() {
-	state = RUN;
+	if (state != JUMP)
+		state = RUN;
 	velX = -4;
-    left = 1;
+	left = 1;
 }
 
 
 /*Update Player position based on Player X velocity*/
 void Player::run() {
+	destRect.y += velY;
 	destRect.x += velX;
+	Hit_Boxes[0].TE = destRect.y;
+	Hit_Boxes[0].BE = destRect.y + destRect.h;
 	Hit_Boxes[0].LE = destRect.x;
 	Hit_Boxes[0].RE = destRect.x + destRect.w;
+	Hit_Boxes[1].BE = Hit_Boxes[0].BE - KickH;
+    Hit_Boxes[1].TE = Hit_Boxes[1].BE - KickH;
 	Hit_Boxes[1].LE = Hit_Boxes[0].LE - KickL;
 	Hit_Boxes[1].RE = Hit_Boxes[0].LE;
 	Hit_Boxes[2].LE = Hit_Boxes[0].RE;
 	Hit_Boxes[2].RE = Hit_Boxes[1].RE + KickL;
+	Hit_Boxes[2].BE = Hit_Boxes[0].BE - KickH;
+    Hit_Boxes[2].TE = Hit_Boxes[2].BE - KickH;
 
 }
 
 void Player::stop_run() {
 	velX = 0;
-	state = IDLE;
+	state = JUMP;
 }
 
 Hit_Box Player::get_Hitbox() {
@@ -149,9 +156,53 @@ Hit_Box Player::Kick(){
 	return Hit_Boxes[left + 1];
 }
 
-void Player::collision_response(int x, int y) {
+void Player::collision_response(char type, int edge, int Obj_index) {
+	//std::cout << type << std::endl;
+	switch (type) {
+            case 'B':
+				velY = 1;
+				destRect.y -= Hit_Boxes[0].BE - edge;
+				Rotate_block = Obj_index;
+				Hit_Boxes[0].TE = destRect.y;
+				Hit_Boxes[0].BE = destRect.y + destRect.h;
+                stop_jump();
+                break;
+            case 'R':
+				velX = 0;
+				destRect.x += Hit_Boxes[0].RE - edge;
+				Hit_Boxes[0].LE = destRect.x;
+				Hit_Boxes[0].RE = destRect.x + destRect.w;
+                break;
+            case 'L':
+				velX = 0;
+				destRect.x -= Hit_Boxes[0].LE - edge;
+				Hit_Boxes[0].LE = destRect.x;
+				Hit_Boxes[0].RE = destRect.x + destRect.w;
+                break;
+            case 'T':
+				velY = 0;
+				destRect.y += edge - Hit_Boxes[0].TE;
+				Hit_Boxes[0].TE = destRect.y;
+				Hit_Boxes[0].BE = destRect.y + destRect.h;
+                break;
+            default:
+                if (Hit_Boxes[0].BE != edge) {
+					//std::cout << type << std::endl;
+                    state = JUMP;
+                    break;
+                }
+    }
+	/*
 	destRect.x += x;
 	destRect.y += y;
+	Hit_Boxes[0].LE = destRect.x;
+	Hit_Boxes[0].RE = destRect.x + destRect.w;
+	Hit_Boxes[0].TE = destRect.y;
+	Hit_Boxes[0].BE = destRect.y + destRect.h;*/
+}
+
+int Player::getState() {
+	return state;
 }
 
 void Player::render(SDL_Renderer* renderer) {

@@ -4,13 +4,21 @@
 #include <SDL_image.h> 
 #include <SDL_timer.h>
 #include <string>
+#include <iostream>
 
 #include "Game_Entity.h"
 #include "../include/Image_Handler.h"
 
 class Player: public Game_Entity {
-    private:
-    int Gravity = 1;
+    protected:
+    double Gravity = 1.5;
+    int state = IDLE;
+    int left = 1;
+    int Jump_Frame = 0;
+    int Jump_Start = 0; 
+    int Jump_FR = 150;
+    int Rotate_block;
+	bool Magic = false;
 
 	public:
         const double SPEED = 3.0;
@@ -21,12 +29,6 @@ class Player: public Game_Entity {
         static constexpr int JUMP = 2;
         static constexpr int KICK = 3;
         static constexpr int SMASH = 4;
-        int state = IDLE;
-        int left = 1;
-        int Jump_Frame = 0;
-        int Jump_Start = 0; 
-        int Jump_FR = 150;
-		bool Magic = false;
 
 		Player(int x, int y, int w, int h, Image_Handler* image):
             Game_Entity(x, y, w, h) {
@@ -60,10 +62,11 @@ class Player: public Game_Entity {
         void Run_L();
         void Run_R();
         void stop_run();
+        int getState();
 		Hit_Box get_Hitbox();
 		Hit_Box Kick();
 		void controller(SDL_Event& event);
-        void collision_response(int x, int y);
+        void collision_response(char type, int edge, int Obj_index);
         void updatePos();
         void render(SDL_Renderer* renderer);
 
