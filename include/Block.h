@@ -1,6 +1,7 @@
 #pragma once
-//#include <SDL.h>
-//#include "Collision.h"
+#include <SDL.h>
+#include "Collision.h"
+#include "Sprite.h"
 
 class Block {
 private:
@@ -11,7 +12,6 @@ private:
 	int State = 0;
 
 	SDL_Rect dest_rect;
-	Hit_Box Box;
 
 public:
 	Hit_Box Box;
@@ -20,40 +20,40 @@ public:
 		dest_rect.h = h;
 
 		if (state == 0) {
-			Box.left_edge = Px - offset;
-			Box.right_edge = Box.left_edge + w;
-			Box.top_edge = Py;
-			Box.bottom_edge = Py + h;
+			Box.LE = Px - offset;
+			Box.RE = Box.LE + w;
+			Box.TE = Py;
+			Box.BE = Py + h;
 		}
 		else if (state == 1) {
 			dest_rect.w = h;
 			dest_rect.h = w;
-			Box.left_edge = Px;
-			Box.right_edge = Px + h;
-			Box.bottom_edge = Py - offset;
-			Box.top_edge = Box.bottom_edge - w;
+			Box.LE = Px;
+			Box.RE = Px + h;
+			Box.BE = Py - offset;
+			Box.TE = Box.BE - w;
 		}
 		else if (state == 2) {
 			dest_rect.w = w;
 			dest_rect.h = h;
-			Box.right_edge = Px + offset;
-			Box.left_edge = Box.right_edge - w;
-			Box.top_edge = Py - h;
-			Box.bottom_edge = Py;
+			Box.RE = Px + offset;
+			Box.LE = Box.RE - w;
+			Box.TE = Py - h;
+			Box.BE = Py;
 		}
 		else if (state == 3) {
 			dest_rect.w = h;
 			dest_rect.h = w;
-			Box.left_edge = Px - h;
-			Box.right_edge = Px;
-			Box.top_edge = Py - offset;
-			Box.bottom_edge = Box.top_edge + w;
+			Box.LE = Px - h;
+			Box.RE = Px;
+			Box.TE = Py - offset;
+			Box.BE = Box.TE + w;
 		}
-		dest_rect.x = Box.left_edge;
-		dest_rect.y = Box.top_edge;
+		dest_rect.x = Box.LE;
+		dest_rect.y = Box.TE;
 	}
 
 	void rotate(bool direct);
 	void move(int x, int y);
-	void render(SDL_Renderer* gameRenderer);
+	void render(SDL_Renderer* gameRenderer, Sprite* sprite);
 };
