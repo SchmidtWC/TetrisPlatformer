@@ -169,13 +169,13 @@ void Player::collision_response(char type, int edge, int Obj_index) {
                 break;
             case 'R':
 				velX = 0;
-				destRect.x += Hit_Boxes[0].RE - edge;
+				destRect.x += edge - Hit_Boxes[0].RE - 2;
 				Hit_Boxes[0].LE = destRect.x;
 				Hit_Boxes[0].RE = destRect.x + destRect.w;
                 break;
             case 'L':
 				velX = 0;
-				destRect.x -= Hit_Boxes[0].LE - edge;
+				destRect.x -= Hit_Boxes[0].LE - edge - 2;
 				Hit_Boxes[0].LE = destRect.x;
 				Hit_Boxes[0].RE = destRect.x + destRect.w;
                 break;
