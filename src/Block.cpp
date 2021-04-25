@@ -24,75 +24,75 @@ void Block::rotate(bool direct) {
 	h = w;
 
 	if (State == 0) {
-		Box.left_edge = Px - offset;
-		Box.right_edge = Box.left_edge + w;
-		Box.top_edge = Py;
-		Box.bottom_edge = Py + h;
+		Box.LE = Px - offset;
+		Box.RE = Box.LE + w;
+		Box.TE = Py;
+		Box.BE = Py + h;
 	}
 	else if (State == 1) {
-		Box.left_edge = Px;
-		Box.right_edge = Px + w;
-		Box.bottom_edge = Py - offset;
-		Box.top_edge = Box.bottom_edge - h;
+		Box.LE = Px;
+		Box.RE = Px + w;
+		Box.BE = Py - offset;
+		Box.TE = Box.BE - h;
 	}
 	else if (State == 2) {
-		Box.right_edge = Px + offset;
-		Box.left_edge = Box.right_edge - w;
-		Box.top_edge = Py - h;
-		Box.bottom_edge = Py;
+		Box.RE = Px + offset;
+		Box.LE = Box.RE - w;
+		Box.TE = Py - h;
+		Box.BE = Py;
 	}
 	else if (State == 3) {
-		Box.left_edge = Px - w;
-		Box.right_edge = Px;
-		Box.top_edge = Py - offset;
-		Box.bottom_edge = Box.top_edge + h;
+		Box.LE = Px - w;
+		Box.RE = Px;
+		Box.TE = Py - offset;
+		Box.BE = Box.TE + h;
 	}
-	dest_rect.x = Box.left_edge;
-	dest_rect.y = Box.top_edge;
+	dest_rect.x = Box.LE;
+	dest_rect.y = Box.TE;
 }
 
-void move(int x, int y){
+void Block::move(int x, int y){
 	Px += x;
 	Py += y;
 	if (State == 0) {
-		Box.left_edge = Px - offset;
-		Box.right_edge = Box.left_edge + w;
-		Box.top_edge = Py;
-		Box.bottom_edge = Py + h;
+		Box.LE = Px - offset;
+		Box.RE = Box.LE + w;
+		Box.TE = Py;
+		Box.BE = Py + h;
 	}
 	else if (State == 1) {
-		Box.left_edge = Px;
-		Box.right_edge = Px + w;
-		Box.bottom_edge = Py - offset;
-		Box.top_edge = Box.bottom_edge - h;
+		Box.LE = Px;
+		Box.RE = Px + w;
+		Box.BE = Py - offset;
+		Box.TE = Box.BE - h;
 	}
 	else if (State == 2) {
-		Box.right_edge = Px + offset;
-		Box.left_edge = Box.right_edge - w;
-		Box.top_edge = Py - h;
-		Box.bottom_edge = Py;
+		Box.RE = Px + offset;
+		Box.LE = Box.RE - w;
+		Box.TE = Py - h;
+		Box.BE = Py;
 	}
 	else if (State == 3) {
-		Box.left_edge = Px - w;
-		Box.right_edge = Px;
-		Box.top_edge = Py - offset;
-		Box.bottom_edge = Box.top_edge + h;
+		Box.LE = Px - w;
+		Box.RE = Px;
+		Box.TE = Py - offset;
+		Box.BE = Box.TE + h;
 	}
-	dest_rect.x = Box.left_edge;
-	dest_rect.y = Box.top_edge;
+	dest_rect.x = Box.LE;
+	dest_rect.y = Box.TE;
 }
 
-void Block::render(SDL_Renderer* gameRenderer) {
+void Block::render(SDL_Renderer* gameRenderer, Sprite* sprite) {
 	for (int i = 0; i < w / dest_rect.w; i++) {
-		sprite->render(gameRenderer, destRect, false);
+		sprite->render(gameRenderer, dest_rect, false);
 		dest_rect.x += dest_rect.w;
 	}
 	dest_rect.y += dest_rect.h;
 	for (int i = 1; i < h / dest_rect.h; i++) {
-		sprite->render(gameRenderer, destRect, false);
+		sprite->render(gameRenderer, dest_rect, false);
 		dest_rect.y += dest_rect.h;
 	}
 
-	dest_rect.x = Box.left_edge;
-	dest_rect.y = Box.top_edge;
+	dest_rect.x = Box.LE;
+	dest_rect.y = Box.TE;
 }
