@@ -19,6 +19,9 @@ class Player: public Game_Entity {
     int Jump_FR = 150;
     int Rotate_block;
 	bool Magic = false;
+	bool end_jump = false;
+    bool runRstop = true;
+    bool runLstop = true;
 
 	public:
         const double SPEED = 3.0;
