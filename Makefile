@@ -1,6 +1,6 @@
 #OBJS specifies which files to compile as part of the project
 OBJS = .\src\main.cpp .\src\Game_Engine.cpp .\src\Image_Handler.cpp .\src\Game_Entity.cpp .\src\Sprite.cpp .\src\Player.cpp .\src\Tile.cpp .\src\Collision.cpp \
-.\src\Slime.cpp .\src\Button.cpp .\src\Menu.cpp 
+.\src\Slime.cpp .\src\Button.cpp .\src\Menu.cpp .\src\Block.cpp .\src\Block_Holder.cpp  
 
 #CC specifies which compiler we're using
 CC = g++

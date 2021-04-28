@@ -35,6 +35,8 @@ class Game_Entity {
 		bool get_check_col();
 		std::vector<Hit_Box> get_Hit_Boxs();
 		virtual void updatePos() {}
-		void render(SDL_Renderer *gameRenderer);
+		virtual void render(SDL_Renderer *gameRenderer);
+		virtual void collision_response(char type, int edge, int Obj_index) {}
+		virtual void controller(SDL_Event& event) {}
 
 };

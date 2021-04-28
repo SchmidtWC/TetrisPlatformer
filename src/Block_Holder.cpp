@@ -15,7 +15,7 @@ void Block_Holder::Move(int x, int y){
 	Hit_Boxes[1] = Blocks[1].Box;
 }
 
-void render(SDL_Renderer* gameRenderer){
-	Blocks[0].render(gameRenderer);
-	Blocks[1].render(gameRenderer);
+void Block_Holder::render(SDL_Renderer* gameRenderer){
+	Blocks[0].render(gameRenderer, sprite);
+	Blocks[1].render(gameRenderer, sprite);
 }

@@ -11,7 +11,7 @@
 
 class Player: public Game_Entity {
     protected:
-    double Gravity = 1.5;
+    double Gravity = 1.3;
     int state = IDLE;
     int left = 0;
     int Jump_Frame = 0;
@@ -68,9 +68,9 @@ class Player: public Game_Entity {
         int getState();
 		Hit_Box get_Hitbox();
 		Hit_Box Kick();
-		void controller(SDL_Event& event);
-        void collision_response(char type, int edge, int Obj_index);
-        void updatePos();
+		virtual void controller(SDL_Event& event);
+        virtual void collision_response(char type, int edge, int Obj_index);
+        virtual void updatePos();
         void render(SDL_Renderer* renderer);
 
 		

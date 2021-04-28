@@ -2,3 +2,39 @@
 (level length in # of tiles)
 (number of pixels in a tile)
 (tile location number) (tile type number) (check collitions)(offset H)(offset V)
+
+	for (int i = 0; i < Objects.size(); i++) {
+		if (Objects[i]->get_check_col()) {
+			for (int j = 0; j < Objects.size(); j++){
+				bool NoBcollision = true;
+				if (i != j && Objects[j]->get_check_col()) {
+					objectHitbox0 = Objects[i]->get_Hit_Boxs()[0];
+					objectHitbox1 = Objects[j]->get_Hit_Boxs()[0];
+					if (Collision_check(objectHitbox0, objectHitbox1)) {
+							if (objectHitbox0.BE - objectHitbox1.TE <= 7) {
+								NoBcollision = false;
+								Objects[i]->collision_response('B', objectHitbox1.TE, i);
+							}
+							else if (objectHitbox0.RE - objectHitbox1.LE <= 5) {
+								NoBcollision = false;
+								Objects[i]->collision_response('R', objectHitbox1.LE, i);
+							}
+							else if (objectHitbox1.RE - objectHitbox0.LE <= 5) {
+								NoBcollision = false;
+								Objects[i]->collision_response('L', objectHitbox1.RE, i);
+							}
+							else if (objectHitbox1.BE - objectHitbox0.TE <= 6) {
+								NoBcollision = false;
+								Objects[i]->collision_response('T', objectHitbox1.BE, i);
+							}
+							else {
+								Objects[i]->collision_response('N', 0, i );
+							}
+												if(NoBcollision) {
+						Objects[i]->collision_response('N', 0, 0);
+					}
+					}
+				}
+			}
+		}
+	}

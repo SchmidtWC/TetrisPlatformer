@@ -2,7 +2,7 @@
 #include "../include/Block.h"
 
 
-struct C_Block {W_1, H_1, R_1, O_1, W_2, H_2, R_2, O_2;};
+struct C_Block {int W_1, H_1, R_1, O_1, W_2, H_2, R_2, O_2;};
 
 static const int Block_I = 0;
 static const int Block_L = 1;
@@ -23,7 +23,7 @@ class Block_Holder: public Tile{
 
 	public:
 		bool active;
-		Block_Holder(int Type, int typeTile, int x, int y, int s, int nCols, bool collision, Image_Handler* image, bool act):
+		Block_Holder(int Type, int typeTile, int x, int y, int s, int nCols, bool collision, Image_Handler* image, bool act, int state):
 		Tile(typeTile, x, y, s, nCols, false, image) {
 			active = act;
 			check_col = collision;
@@ -63,7 +63,7 @@ class Block_Holder: public Tile{
 			Temp.W_1 = two;
 			Temp.H_1 = one;
 			Temp.R_1 = 0;
-			Temp.O_1 = one;
+			Temp.O_1 = two;
 			Temp.W_2 = two;
 			Temp.H_2 = one;
 			Temp.R_2 = 0;
@@ -97,13 +97,13 @@ class Block_Holder: public Tile{
 			Temp.O_2 = two;
 			C_Blocks[6] = Temp;//{.W_1 = one, .H_1 = one, .R_1 = 2, .O_1 = 0, .W_2 = three, .H_2 = one, .R_2 = 0, .O_2 = two};
 
-			Blocks.push_back(Block(x, y, C_Blocks[Type].W_1, C_Blocks[Type].H_1, s, C_Blocks[Type].R_1, C_Blocks[Type].O_1));
-			Blocks.push_back(Block(x, y, C_Blocks[Type].W_2, C_Blocks[Type].H_2, s, C_Blocks[Type].R_2, C_Blocks[Type].O_2));
+			Blocks.push_back(Block(x, y, C_Blocks[Type].W_1, C_Blocks[Type].H_1, s, C_Blocks[Type].R_1+state, C_Blocks[Type].O_1));
+			Blocks.push_back(Block(x, y, C_Blocks[Type].W_2, C_Blocks[Type].H_2, s, C_Blocks[Type].R_2+state, C_Blocks[Type].O_2));
 			Hit_Boxes.push_back(Blocks[0].Box);
 			Hit_Boxes.push_back(Blocks[1].Box);
 		}
 
 		void Rotate(bool direct);
 		void Move(int x, int y);
-		void render(SDL_Renderer* gameRenderer);
+		virtual void render(SDL_Renderer* gameRenderer);
 };

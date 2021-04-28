@@ -1,0 +1,41 @@
+Block: I
+State 0: i
+State 1: n
+State 2: m
+State 3: ,
+
+Block J:
+State 0: f
+State 1: g
+State 2: h
+State 3: j
+
+Block L:
+State 0: k
+State 1: l
+State 2: ;
+State 3: /
+
+Block o:
+State 0: o
+State 1: p
+State 2: [
+State 3: ]
+
+Block s:
+State 0: s
+State 1: a
+State 2: d
+State 3: q
+
+Block T:
+State 0: t
+State 1: r
+State 2: e
+State 3: w
+
+Block z:
+State 0: x
+State 1: c
+State 2: v
+State 3: b

@@ -30,6 +30,6 @@ class Tile: public Game_Entity{
 		}
 
 		~Tile() {}
-		void render(SDL_Renderer* gameRenderer);
+		virtual void render(SDL_Renderer* gameRenderer);
 
 };

@@ -1,5 +1,7 @@
 #include "../include/Game_Engine.h"
 
+static const int numberSpriteColumns = 8;
+
 /*Constructs the Game Engine*/
 Game_Engine::Game_Engine() {
 
@@ -65,8 +67,8 @@ int Game_Engine::Game_loop() {
 */
 int Game_Engine::Level_init(int level) {
 	
-	char symbol;
-	int x=0, y=0, ncols=8;
+	char symbol; 
+	int x=0, y=0, nCols=numberSpriteColumns;
 
 	//Read tile and level dementions
 	switch (level) {
@@ -99,13 +101,13 @@ int Game_Engine::Level_init(int level) {
 			Level_file >> symbol;
 			switch (symbol) {
 				case '0':
-					Objects.push_back(new Tile(0, x, y, tile_size, ncols, true, &Images));
+					Objects.push_back(new Tile(0, x, y, tile_size, nCols, true, &Images));
 					break;
 				case '1':
-					Objects.push_back(new Tile(1, x, y, tile_size, ncols, false, &Images));
+					Objects.push_back(new Tile(1, x, y, tile_size, nCols, false, &Images));
 					break;
 				case '2':
-					Objects.push_back(new Tile(2, x, y, tile_size, ncols, false, &Images));
+					Objects.push_back(new Tile(2, x, y, tile_size, nCols, false, &Images));
 					break;
 				case 'P':
 					player = new Player(x, y, tile_size, tile_size, &Images);
@@ -114,8 +116,80 @@ int Game_Engine::Level_init(int level) {
 				case 'S':
 					Objects.push_back(new Slime(x, y, tile_size, tile_size, "./asset/slime.png", &Images));
 					break;
+				case 'I':
+					Objects.push_back(new Block_Holder(0, 3, x, y, tile_size, nCols, true, &Images, true, 0));
+					break;
+				case 'i':
+					Objects.push_back(new Block_Holder(0, 10, x, y, tile_size, nCols, true, &Images, false, 0));
+					break;
+				case 'N':
+					Objects.push_back(new Block_Holder(0, 3, x, y, tile_size, nCols, true, &Images, true, 1));
+					break;
+				case 'n':
+					Objects.push_back(new Block_Holder(0, 10, x, y, tile_size, nCols, true, &Images, false, 1));
+					break;
+				case 'M':
+					Objects.push_back(new Block_Holder(0, 3, x, y, tile_size, nCols, true, &Images, true, 2));
+					break;
+				case 'm':
+					Objects.push_back(new Block_Holder(0, 10, x, y, tile_size, nCols, true, &Images, false, 2));
+					break;
+				case '<':
+					Objects.push_back(new Block_Holder(0, 3, x, y, tile_size, nCols, true, &Images, true, 3));
+					break;
+				case ',':
+					Objects.push_back(new Block_Holder(0, 10, x, y, tile_size, nCols, true, &Images, false, 3));
+					break;
+				case 'F':
+					Objects.push_back(new Block_Holder(2, 4, x, y, tile_size, nCols, true, &Images, true, 0));
+					break;
+				case 'f':
+					Objects.push_back(new Block_Holder(2, 11, x, y, tile_size, nCols, true, &Images, false, 0));
+					break;
+				case 'G':
+					Objects.push_back(new Block_Holder(2, 4, x, y, tile_size, nCols, true, &Images, true, 1));
+					break;
+				case 'g':
+					Objects.push_back(new Block_Holder(2, 11, x, y, tile_size, nCols, true, &Images, false, 1));
+					break;
+				case 'H':
+					Objects.push_back(new Block_Holder(2, 4, x, y, tile_size, nCols, true, &Images, true, 2));
+					break;
+				case 'h':
+					Objects.push_back(new Block_Holder(2, 11, x, y, tile_size, nCols, true, &Images, false, 2));
+					break;
+				case 'J':
+					Objects.push_back(new Block_Holder(2, 4, x, y, tile_size, nCols, true, &Images, true, 3));
+					break;
+				case 'j':
+					Objects.push_back(new Block_Holder(2, 11, x, y, tile_size, nCols, true, &Images, false, 3));
+					break;
+				case 'K':
+					Objects.push_back(new Block_Holder(1, 5, x, y, tile_size, nCols, true, &Images, true, 0));
+					break;
+				case 'k':
+					Objects.push_back(new Block_Holder(1, 12, x, y, tile_size, nCols, true, &Images, false, 0));
+					break;
+				case 'L':
+					Objects.push_back(new Block_Holder(1, 5, x, y, tile_size, nCols, true, &Images, true, 1));
+					break;
+				case 'l':
+					Objects.push_back(new Block_Holder(1, 12, x, y, tile_size, nCols, true, &Images, false, 1));
+					break;
+				case ':':
+					Objects.push_back(new Block_Holder(1, 5, x, y, tile_size, nCols, true, &Images, true, 2));
+					break;
+				case ';':
+					Objects.push_back(new Block_Holder(1, 12, x, y, tile_size, nCols, true, &Images, false, 2));
+					break;
+				case '?':
+					Objects.push_back(new Block_Holder(1, 5, x, y, tile_size, nCols, true, &Images, true, 3));
+					break;
+				case '/':
+					Objects.push_back(new Block_Holder(1, 12, x, y, tile_size, nCols, true, &Images, false, 3));
+					break;
 
-				default:
+					default:
 					break;
 			}
 			

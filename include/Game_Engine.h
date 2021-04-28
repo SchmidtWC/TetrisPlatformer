@@ -16,6 +16,7 @@
 #include "Slime.h"
 #include "Collision.h"
 #include "Menu.h"
+#include "Block_Holder.h"
 
 //Window Size in Pixels
 static const int SCREEN_WIDTH = 960;

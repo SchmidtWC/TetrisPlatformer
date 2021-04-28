@@ -53,7 +53,7 @@ void Player::controller(SDL_Event& input){
 }
 
 void Player::updatePos() {
-	std::cout << state << std::endl;
+	//std::cout << state << std::endl;
     switch (state) {
 		case IDLE:
 			sprite->setFrame(0);
@@ -70,6 +70,7 @@ void Player::updatePos() {
 }
 
 void Player::jump() {
+	//std::cout << velY << std::endl;
 	// Sets Vertical velocity, and Player state to Jump
 	if (Jump_Frame == 0 && state != JUMP) {
 		Jump_Start = SDL_GetTicks()/ Jump_FR;

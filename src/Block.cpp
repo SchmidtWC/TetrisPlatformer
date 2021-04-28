@@ -82,8 +82,14 @@ void Block::move(int x, int y){
 	dest_rect.y = Box.TE;
 }
 
+#include <iostream>
 void Block::render(SDL_Renderer* gameRenderer, Sprite* sprite) {
-	for (int i = 0; i < w / dest_rect.w; i++) {
+	std::cout << "x:"<< dest_rect.x << std::endl;
+	std::cout << "y:"<< dest_rect.y << std::endl;
+	std::cout << "w:"<< dest_rect.w << std::endl;
+	std::cout << "h:"<< dest_rect.h << "\n\n\n\n\n"<<std::endl;
+	for (int i = 1; i < w / dest_rect.w; i++) {
+		std::cout << w / dest_rect.w << std::endl;
 		sprite->render(gameRenderer, dest_rect, false);
 		dest_rect.x += dest_rect.w;
 	}
