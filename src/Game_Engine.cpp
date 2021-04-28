@@ -253,34 +253,35 @@ int Game_Engine::Update_Mechanics() {
 			playerHitbox = player->get_Hitbox();
 			break;
 	}
-	int edge = 0;
-	char type = 'N';
+	bool NoBcollision = true;
 	for (int i = 0; i < Objects.size(); i++) {
 		if (Objects[i]->get_check_col()) {
 			objectHitbox = Objects[i]->get_Hit_Boxs()[0];
 			if (Collision_check(playerHitbox, objectHitbox)) {
-					//std::cout << objectHitbox.TE << std::endl;
-					if (playerHitbox.BE - objectHitbox.TE <= 6) {
-						edge = objectHitbox.TE;
-						type = 'B';
+					if (playerHitbox.BE - objectHitbox.TE <= 7) {
+						NoBcollision = false;
 						player->collision_response('B', objectHitbox.TE, i);
 					}
-					else if (objectHitbox.BE - playerHitbox.TE <= 6) {
-						player->collision_response('T', objectHitbox.BE, i);
-					}
-					else if (playerHitbox.RE - objectHitbox.LE <= 4) {
-						std::cout << "R" << std::endl;
+					else if (playerHitbox.RE - objectHitbox.LE <= 5) {
+						NoBcollision = false;
 						player->collision_response('R', objectHitbox.LE, i);
 					}
-					else if (objectHitbox.RE - playerHitbox.LE >= 4) {
-						std::cout << "L" << std::endl;
+					else if (objectHitbox.RE - playerHitbox.LE <= 5) {
+						NoBcollision = false;
 						player->collision_response('L', objectHitbox.RE, i);
+					}
+					else if (objectHitbox.BE - playerHitbox.TE <= 6) {
+						NoBcollision = false;
+						player->collision_response('T', objectHitbox.BE, i);
 					}
 					else {
 						player->collision_response('N', 0, i );
 					}
 			}
 		}
+	}
+	if(NoBcollision) {
+		player->collision_response('N', 0, 0);
 	}
 	
 	return 0;
