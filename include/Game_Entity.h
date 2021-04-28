@@ -34,6 +34,7 @@ class Game_Entity {
 		double get_velY();
 		bool get_check_col();
 		std::vector<Hit_Box> get_Hit_Boxs();
+		virtual void updatePos() {}
 		void render(SDL_Renderer *gameRenderer);
 
 };

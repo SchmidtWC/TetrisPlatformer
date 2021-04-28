@@ -1,11 +1,12 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = .\src\main.cpp .\src\Game_Engine.cpp .\src\Image_Handler.cpp .\src\Game_Entity.cpp .\src\Sprite.cpp .\src\Player.cpp .\src\Tile.cpp .\src\Collision.cpp
+OBJS = .\src\main.cpp .\src\Game_Engine.cpp .\src\Image_Handler.cpp .\src\Game_Entity.cpp .\src\Sprite.cpp .\src\Player.cpp .\src\Tile.cpp .\src\Collision.cpp \
+.\src\Slime.cpp .\src\Button.cpp .\src\Menu.cpp 
 
 #CC specifies which compiler we're using
 CC = g++
 
 #INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = -IC:\SDL2\include\SDL2\
+INCLUDE_PATHS = -IC:\SDL2\include\SDL2
 
 #LIBRARY_PATHS specifies the additional library paths we'll need
 LIBRARY_PATHS = -LC:\SDL2\lib
@@ -16,7 +17,7 @@ LIBRARY_PATHS = -LC:\SDL2\lib
 COMPILER_FLAGS = -w
 
 #LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
 
 #OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = game

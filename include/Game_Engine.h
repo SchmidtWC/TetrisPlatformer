@@ -13,7 +13,9 @@
 #include "Game_Entity.h"
 #include "Player.h"
 #include "Tile.h"
+#include "Slime.h"
 #include "Collision.h"
+#include "Menu.h"
 
 //Window Size in Pixels
 static const int SCREEN_WIDTH = 960;
@@ -37,12 +39,14 @@ private:
 
 	//Game Objects
 	Player* player;
-	std::vector<Game_Entity> Objects;
+	std::vector<Game_Entity*> Objects;
 
-	//Particle_Emitter Hive;
+	//Menu 
+	Menu menu;
 
 	//values to save
 	bool Run_game = true;
+	bool program_running = true;
 	int Camera_move = 0;
 	int Camera_move_dist = 0;
 	int level_height = 0, level_width, tile_size, tile_x, tile_y, tile_type;
@@ -52,10 +56,12 @@ private:
 	int Render();
 	int Handle_Events();
 	int Update_Mechanics();
+	int Level_init(int level);
 	int Quit();
-	int Level_init();
 
 public:
 	Game_Engine();
 	int Game_loop();
+	SDL_Window* getWindow();
+	SDL_Renderer* getRenderer();
 };

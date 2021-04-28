@@ -20,9 +20,10 @@ Game_Engine::Game_Engine() {
         (SDL_CreateRenderer(game_window.get(), -1, SDL_RENDERER_PRESENTVSYNC), SDL_DestroyRenderer);
 
 	//Init Image Handler
-	std::vector <std::string> Image_names = {"./asset/player.png", "./asset/tiles.png"};
+	std::vector <std::string> Image_names = {"./asset/player.png", "./asset/tiles.png", "./asset/slime.png", "./asset/button.png"};
 
 	Images = Image_Handler(Image_names, game_renderer.get());
+	menu = Menu(game_window.get(), &Images);
 }
 
 
@@ -30,24 +31,26 @@ Game_Engine::Game_Engine() {
    Then loops through the Game Engine Functions while Run_game = ture
  */
 int Game_Engine::Game_loop() {
+	program_running = true;
+	while (program_running) {
+		int level = menu.menuLoop(0, game_renderer.get());
 
-	// Init Game entities
-	player = new Player(100, 255, 64, 64, &Images);
+		Level_init(level);
+		Run_game = true;
+		while (Run_game) {
+			//LST = SDL_GetTicks();
+			Handle_Events();
+			Update_Mechanics();
+			Render();
 
-	Level_init();
-	Run_game = true;
-	while (Run_game) {
-		//LST = SDL_GetTicks();
-		Handle_Events();
-		Update_Mechanics();
-		Render();
-
-		/*/Hold until current frame finishes
-		hold_duration = SDL_GetTicks() - LST;
-		if (hold_duration < frame_duration) {
-			SDL_Delay(frame_duration - hold_duration);
-		}*/
+			/*/Hold until current frame finishes
+			hold_duration = SDL_GetTicks() - LST;
+			if (hold_duration < frame_duration) {
+				SDL_Delay(frame_duration - hold_duration);
+			}*/
+		}
 	}
+
 	Quit();
 	return 0;
 }
@@ -60,13 +63,22 @@ int Game_Engine::Game_loop() {
 		- Wall Rects
 		- Player
 */
-int Game_Engine::Level_init() {
+int Game_Engine::Level_init(int level) {
 	
 	char symbol;
 	int x=0, y=0, ncols=8;
 
 	//Read tile and level dementions
-	Level_file.open("./asset/level_0.txt");
+	switch (level) {
+		case 0:
+			Level_file.open("./asset/level_0.txt");
+			break;
+		case 1:
+			Level_file.open("./asset/level_1.txt");
+			break;	
+	}
+
+
 	if (Level_file.is_open()){
 		Level_file >> tile_size;
 	}
@@ -81,22 +93,26 @@ int Game_Engine::Level_init() {
 	*/
 
 	//Read level editor sheet layout
+	Objects.clear();
 	if (Level_file.is_open()) {
 		while (!Level_file.eof()) {
 			Level_file >> symbol;
 			switch (symbol) {
 				case '0':
-					Objects.push_back(Tile(0, x, y, tile_size, ncols, true, &Images));
+					Objects.push_back(new Tile(0, x, y, tile_size, ncols, true, &Images));
 					break;
 				case '1':
-					Objects.push_back(Tile(1, x, y, tile_size, ncols, false, &Images));
+					Objects.push_back(new Tile(1, x, y, tile_size, ncols, false, &Images));
 					break;
 				case '2':
-					Objects.push_back(Tile(2, x, y, tile_size, ncols, false, &Images));
+					Objects.push_back(new Tile(2, x, y, tile_size, ncols, false, &Images));
 					break;
 				case 'P':
 					player = new Player(x, y, tile_size, tile_size, &Images);
 					// Objects.insert(Objects.begin(), Player(x, y, tile_size, tile_size, &Images));
+					break;
+				case 'S':
+					Objects.push_back(new Slime(x, y, tile_size, tile_size, "./asset/slime.png", &Images));
 					break;
 
 				default:
@@ -165,7 +181,7 @@ int Game_Engine::Render() {
 
 	//Loop Through Objects to Render
 	for (int i = 0; i < Objects.size(); i++) {
-		Objects[i].render(game_renderer.get());
+		Objects[i]->render(game_renderer.get());
 	}	
 
 	player->render(game_renderer.get());
@@ -183,7 +199,22 @@ int Game_Engine::Handle_Events() {
 	SDL_Event input;
 	SDL_PollEvent(&input);
 
-	if (input.type == SDL_QUIT) Run_game = false;
+	if (input.type == SDL_QUIT) {
+		Run_game =false;
+		program_running = false;
+	}
+
+	if (input.type == SDL_KEYDOWN) {
+		switch(input.key.keysym.sym ) {
+			case SDLK_ESCAPE:
+				if (menu.menuLoop(2, game_renderer.get()) == 9999) {
+					Run_game = false;
+				}
+				break;
+			default:
+				break;
+		}
+	}
 
 	/* Calls Player movemet Functions when a key is pressed
 		Jump : Space
@@ -209,6 +240,9 @@ int Game_Engine::Update_Mechanics() {
 	Hit_Box playerHitbox;
 	Hit_Box objectHitbox;
 	std::vector<Hit_Box> playerHitboxes;
+	for (int i = 0; i < Objects.size(); i++) {
+		Objects[i]->updatePos();
+	}	
 	player->updatePos();
 	switch (player->getState())
 	{
@@ -222,14 +256,17 @@ int Game_Engine::Update_Mechanics() {
 	int edge = 0;
 	char type = 'N';
 	for (int i = 0; i < Objects.size(); i++) {
-		if (Objects[i].get_check_col()) {
-			objectHitbox = Objects[i].get_Hit_Boxs()[0];
+		if (Objects[i]->get_check_col()) {
+			objectHitbox = Objects[i]->get_Hit_Boxs()[0];
 			if (Collision_check(playerHitbox, objectHitbox)) {
 					//std::cout << objectHitbox.TE << std::endl;
 					if (playerHitbox.BE - objectHitbox.TE <= 6) {
 						edge = objectHitbox.TE;
 						type = 'B';
 						player->collision_response('B', objectHitbox.TE, i);
+					}
+					else if (objectHitbox.BE - playerHitbox.TE <= 6) {
+						player->collision_response('T', objectHitbox.BE, i);
 					}
 					else if (playerHitbox.RE - objectHitbox.LE <= 4) {
 						std::cout << "R" << std::endl;
@@ -239,9 +276,6 @@ int Game_Engine::Update_Mechanics() {
 						std::cout << "L" << std::endl;
 						player->collision_response('L', objectHitbox.RE, i);
 					}
-					else if (objectHitbox.BE - playerHitbox.TE <= 6) {
-						player->collision_response('T', objectHitbox.BE, i);
-					}
 					else {
 						player->collision_response('N', 0, i );
 					}
@@ -250,5 +284,12 @@ int Game_Engine::Update_Mechanics() {
 	}
 	
 	return 0;
+}
+
+SDL_Window* Game_Engine::getWindow() {
+	return game_window.get();
+}
+SDL_Renderer* Game_Engine::getRenderer() {
+	return game_renderer.get();
 }
 

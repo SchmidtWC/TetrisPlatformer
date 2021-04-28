@@ -13,7 +13,7 @@ class Player: public Game_Entity {
     protected:
     double Gravity = 1.5;
     int state = IDLE;
-    int left = 1;
+    int left = 0;
     int Jump_Frame = 0;
     int Jump_Start = 0; 
     int Jump_FR = 150;

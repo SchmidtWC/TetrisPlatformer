@@ -39,7 +39,11 @@ void Player::controller(SDL_Event& input){
 }
 
 void Player::updatePos() {
+	std::cout << state << std::endl;
     switch (state) {
+		case IDLE:
+			sprite->setFrame(0);
+			break;
 		case JUMP:
 			jump();
 			break;
@@ -54,7 +58,6 @@ void Player::updatePos() {
 void Player::jump() {
 	// Sets Vertical velocity, and Player state to Jump
 	if (Jump_Frame == 0 && state != JUMP) {
-		std::cout << "j" << std::endl;
 		Jump_Start = SDL_GetTicks()/ Jump_FR;
 		velY = -5;
 		state = JUMP;
@@ -64,11 +67,18 @@ void Player::jump() {
 	  and the Y velocity is less then or equal to 4*/
 	else if (Jump_Frame < (SDL_GetTicks() / Jump_FR - Jump_Start) && velY <=4) {
 		Jump_Frame = (SDL_GetTicks() / Jump_FR - Jump_Start);
+		if (Jump_Frame < 1)
+			sprite->setFrame(4);
+		else if (Jump_Frame < 2)
+			sprite->setFrame(5);
+		else 
+			sprite->setFrame(6);
 		velY += Gravity;
 		if (velY == 0) {
 			Gravity = 2;
 		}
 	}
+
 
 	//Adjust Player position and boundaries based on the X and Y velocity
 	destRect.y += velY;
