@@ -194,7 +194,7 @@ void Player::collision_response(char type, int edge, int Obj_index) {
 				if (edge > Hit_Boxes[0].BE) {
 					collision = false;
 				}
-				destRect.y -= Hit_Boxes[0].BE - edge;
+				destRect.y -= Hit_Boxes[0].BE - edge -1;
 				Rotate_block = Obj_index;
 				Hit_Boxes[0].TE = destRect.y;
 				Hit_Boxes[0].BE = destRect.y + destRect.h;

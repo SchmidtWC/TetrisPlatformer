@@ -26,7 +26,6 @@ void Menu::eventHandler() {
         if (input.type == SDL_MOUSEBUTTONDOWN) {
             int x, y;
             SDL_GetMouseState(&x, &y);
-            std::cout << menuType << std::endl;
             switch(menuType) {
                 case 0:
                     for (int i = 0; i < startButtons.size(); i++) {

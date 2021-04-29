@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "../include/Game_Entity.h"
 
 class Tile: public Game_Entity{
@@ -22,6 +23,7 @@ class Tile: public Game_Entity{
             tileType = typeTile;
 			numCols = nCols;
 			sprite = new Sprite(1, 16, 16, "./asset/tiles.png", image);
+
 
 			int srcx = (tileType % numCols);
 			int srcy = (tileType / numCols);

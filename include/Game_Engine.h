@@ -41,6 +41,7 @@ private:
 	//Game Objects
 	Player* player;
 	std::vector<Game_Entity*> Objects;
+	std::vector<Block_Holder*> Block_Holders;
 
 	//Menu 
 	Menu menu;

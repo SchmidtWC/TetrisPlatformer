@@ -2,11 +2,13 @@
 #include <SDL.h>
 #include "Collision.h"
 #include "Sprite.h"
+#include <iostream>
 
 class Block {
 private:
 	int Px, Py, w, h;
 	int offset;
+	double degree;
 
 	//int Tile_Size;
 	int State = 0;
@@ -18,7 +20,7 @@ public:
 	Block(int Px, int Py, int w, int h, int Tile_Size, int state, int offset): Px(Px), Py(Py), w(w), h(h), State(state), offset(offset){
 		dest_rect.w = w;
 		dest_rect.h = h;
-
+		
 		if (state == 0) {
 			Box.LE = Px - offset;
 			Box.RE = Box.LE + w;
@@ -30,7 +32,7 @@ public:
 			dest_rect.h = w;
 			Box.LE = Px;
 			Box.RE = Px + h;
-			Box.BE = Py - offset;
+			Box.BE = Py + offset;
 			Box.TE = Box.BE - w;
 		}
 		else if (state == 2) {
@@ -54,6 +56,7 @@ public:
 	}
 
 	void rotate(bool direct);
+	void rotate2(bool direct);
 	void move(int x, int y);
 	void render(SDL_Renderer* gameRenderer, Sprite* sprite);
 };
