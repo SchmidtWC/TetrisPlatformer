@@ -58,5 +58,6 @@ public:
 	void rotate(bool direct);
 	void rotate2(bool direct);
 	void move(int x, int y);
+	bool inside(int x, int y);
 	void render(SDL_Renderer* gameRenderer, Sprite* sprite);
 };

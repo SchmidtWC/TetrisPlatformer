@@ -39,7 +39,7 @@ class Player: public Game_Entity {
                   sprite->setFrame(0);
 
                   Hit_Box Temp; 
-                  Temp.LE = destRect.x;
+                  Temp.LE = destRect.x; 
 	              Temp.RE = destRect.x + destRect.w;
 	              Temp.TE = destRect.y;
 	              Temp.BE = destRect.y + destRect.h;

@@ -395,8 +395,11 @@ int Game_Engine::Handle_Events() {
 	if (input.type == SDL_MOUSEBUTTONDOWN) {
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		if (Block_Holders.size() > 0)
-			Block_Holders[0]->Rotate(true);
+		for (int i = 0; i < Block_Holders.size(); i++) {
+			if (Block_Holders[i]->inside(x, y) && Block_Holders[i]->active) {
+				Block_Holders[i]->Rotate(true);
+			}
+		}
 	}
 
 	/* Calls Player movemet Functions when a key is pressed
@@ -423,6 +426,7 @@ int Game_Engine::Update_Mechanics() {
 	Hit_Box playerHitbox;
 	Hit_Box objectHitbox;
 	std::vector<Hit_Box> playerHitboxes;
+	std::vector<Hit_Box> BlockHolderHitboxes;
 	for (int i = 0; i < Objects.size(); i++) {
 		Objects[i]->updatePos();
 	}	
@@ -460,6 +464,36 @@ int Game_Engine::Update_Mechanics() {
 					else {
 						player->collision_response('N', 0, i );
 					}
+			}
+		}
+	}
+
+	for (int i = 0; i < Block_Holders.size(); i++) {
+		if (Block_Holders[i]->get_check_col()) {
+			BlockHolderHitboxes = Block_Holders[i]->get_Hit_Boxs();
+			for (int j = 0; j < BlockHolderHitboxes.size(); j++) {
+				objectHitbox = BlockHolderHitboxes[j];
+				if (Collision_check(playerHitbox, objectHitbox)) {
+						if (playerHitbox.BE - objectHitbox.TE <= 7) {
+							NoBcollision = false;
+							player->collision_response('B', objectHitbox.TE, i);
+						}
+						else if (playerHitbox.RE - objectHitbox.LE <= 5) {
+							NoBcollision = false;
+							player->collision_response('R', objectHitbox.LE, i);
+						}
+						else if (objectHitbox.RE - playerHitbox.LE <= 5) {
+							NoBcollision = false;
+							player->collision_response('L', objectHitbox.RE, i);
+						}
+						else if (objectHitbox.BE - playerHitbox.TE <= 6) {
+							NoBcollision = false;
+							player->collision_response('T', objectHitbox.BE, i);
+						}
+						else {
+							player->collision_response('N', 0, i );
+						}
+				}
 			}
 		}
 	}

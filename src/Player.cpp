@@ -100,8 +100,8 @@ void Player::jump() {
 	destRect.x += velX;
 	Hit_Boxes[0].TE = destRect.y;
 	Hit_Boxes[0].BE = destRect.y + destRect.h;
-	Hit_Boxes[0].LE = destRect.x;
-	Hit_Boxes[0].RE = destRect.x + destRect.w;
+	Hit_Boxes[0].LE = destRect.x + 6;
+	Hit_Boxes[0].RE = destRect.x + destRect.w - 6;
 	Hit_Boxes[1].BE = Hit_Boxes[0].BE - KickH;
 	Hit_Boxes[1].TE = Hit_Boxes[1].BE - KickH;
 	Hit_Boxes[1].LE = Hit_Boxes[0].LE - KickL;
@@ -154,8 +154,8 @@ void Player::run() {
 	destRect.x += velX;
 	//Hit_Boxes[0].TE = destRect.y;
 	//Hit_Boxes[0].BE = destRect.y + destRect.h;
-	Hit_Boxes[0].LE = destRect.x;
-	Hit_Boxes[0].RE = destRect.x + destRect.w;
+	Hit_Boxes[0].LE = destRect.x + 6;
+	Hit_Boxes[0].RE = destRect.x + destRect.w -6;
 	//Hit_Boxes[1].BE = Hit_Boxes[0].BE - KickH;
 	//Hit_Boxes[1].TE = Hit_Boxes[1].BE - KickH;
 	Hit_Boxes[1].LE = Hit_Boxes[0].LE - KickL;
@@ -188,6 +188,7 @@ Hit_Box Player::Kick(){
 
 void Player::collision_response(char type, int edge, int Obj_index) {
 	bool collision = true;
+	std::cout << type << std::endl;
 	switch (type) {
             case 'B':
 				velY = 0;
@@ -205,15 +206,15 @@ void Player::collision_response(char type, int edge, int Obj_index) {
             case 'R':
 				velX = 0;
 				destRect.x += edge - Hit_Boxes[0].RE - 1;
-				Hit_Boxes[0].LE = destRect.x;
-				Hit_Boxes[0].RE = destRect.x + destRect.w;
+				Hit_Boxes[0].LE = destRect.x + 6;
+				Hit_Boxes[0].RE = destRect.x + destRect.w - 6;
 				//stop_run();
                 break;
             case 'L':
 				velX = 0;
 				destRect.x -= Hit_Boxes[0].LE - edge - 1;
-				Hit_Boxes[0].LE = destRect.x;
-				Hit_Boxes[0].RE = destRect.x + destRect.w;
+				Hit_Boxes[0].LE = destRect.x + 6;
+				Hit_Boxes[0].RE = destRect.x + destRect.w -6;
 				//stop_run();
                 break;
             case 'T':

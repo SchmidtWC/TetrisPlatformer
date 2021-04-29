@@ -78,22 +78,22 @@ class Block_Holder: public Tile{
 
 			Temp.W_1 = two;
 			Temp.H_1 = one;
-			Temp.R_1 = 0;
-			Temp.O_1 = two;
-			Temp.W_2 = two;
-			Temp.H_2 = one;
-			Temp.R_2 = 2;
-			Temp.O_2 = one;
-			C_Blocks[4] = Temp;//{.W_1 = two, .H_1 = one, .R_1 = 0, .O_1 = two, .W_2 = two, .H_2 = one, .R_2 = 2, .O_2 = one};
-
-			Temp.W_1 = two;
-			Temp.H_1 = one;
 			Temp.R_1 = 2;
 			Temp.O_1 = one;
 			Temp.W_2 = two;
 			Temp.H_2 = one;
 			Temp.R_2 = 0;
 			Temp.O_2 = 0;
+			C_Blocks[4] = Temp;//{.W_1 = two, .H_1 = one, .R_1 = 0, .O_1 = two, .W_2 = two, .H_2 = one, .R_2 = 2, .O_2 = one};
+
+			Temp.W_1 = two;
+			Temp.H_1 = one;
+			Temp.R_1 = 0;
+			Temp.O_1 = two;
+			Temp.W_2 = two;
+			Temp.H_2 = one;
+			Temp.R_2 = 2;
+			Temp.O_2 = one;
 			C_Blocks[5] = Temp;//{.W_1 = two, .H_1 = one, .R_1 = 2, .O_1 = one, .W_2 = two, .H_2 = one, .R_2 = 0, .O_2 = 0};
 
 			Temp.W_1 = one;
@@ -115,4 +115,5 @@ class Block_Holder: public Tile{
 		void Rotate(bool direct);
 		void Move(int x, int y);
 		void render(SDL_Renderer* gameRenderer);
+		bool inside(int x, int y);
 };
